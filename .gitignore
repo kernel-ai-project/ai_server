@@ -1,0 +1,58 @@
+### Python ###
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C 확장 빌드
+*.so
+
+# 가상환경
+venv/
+env/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# 배포 관련
+build/
+dist/
+*.egg-info/
+.eggs/
+
+### FastAPI / Uvicorn ###
+# 로그 파일
+*.log
+logs/
+# 환경 변수 파일
+.env
+.env.*
+
+### IDE ###
+.idea/
+.vscode/
+*.iml
+
+### OS ###
+.DS_Store
+Thumbs.db
+
+### 테스트 / 캐시 ###
+.pytest_cache/
+.coverage
+htmlcov/
+.cache/
+.mypy_cache/
+.tox/
+.nox/
+coverage.xml
+
+### Docker ###
+# Docker 빌드 캐시
+**/tmp/
+**/cache/
+.dockerignore
+
+### 기타 ###
+# jupyter, notebook, etc.
+.ipynb_checkpoints/
