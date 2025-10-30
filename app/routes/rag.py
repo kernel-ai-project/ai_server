@@ -1,24 +1,13 @@
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 
-from ..schemas import AskRequest, AskResponse, EchoRequest, EchoResponse
+from ..schemas import AskRequest, AskResponse
 from rag.workflow import run_rag, stream_rag
 
 router = APIRouter()
 
 
-@router.get("/health")
-async def health() -> dict[str, str]:
-    """간단한 헬스 체크 엔드포인트."""
-    return {"status": "ok"}
-
-
-@router.post("/echo", response_model=EchoResponse)
-async def echo(req: EchoRequest) -> EchoResponse:
-    """요청 메시지를 그대로 반환."""
-    return EchoResponse(echo=req.message)
-
-
+# 일반 답변
 @router.post("/ask", response_model=AskResponse)
 async def ask(req: AskRequest) -> AskResponse:
     """질문을 LangGraph RAG 워크플로에 전달."""
@@ -26,17 +15,12 @@ async def ask(req: AskRequest) -> AskResponse:
     return AskResponse(answer=answer)
 
 
+# 스트리밍 방식 답변
 @router.post("/ask/stream")
 async def ask_stream(req: AskRequest) -> StreamingResponse:
     async def plain_stream():
-        buffer = ""
         async for chunk in stream_rag(req.question):
-            buffer += chunk
-            if len(buffer) >= 12 or buffer.endswith((" ", "\n", ".", "?", "!")):
-                yield buffer
-                buffer = ""
-        if buffer:
-            yield buffer
+            yield chunk  # SSE 포맷 없이 문자열만 흘려보냄
 
     return StreamingResponse(
         plain_stream(),
