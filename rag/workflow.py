@@ -1,14 +1,12 @@
 import os
-from typing import List, TypedDict
+from typing import AsyncGenerator, List, TypedDict
 from langchain_chroma import Chroma
 from langchain_upstage import UpstageEmbeddings, ChatUpstage
 from langchain_core.documents import Document
 from langchain_core.prompts import ChatPromptTemplate
-
-# LangGraph
 from langgraph.graph import StateGraph, END
-
 from config import PERSIST_DIR
+from collections.abc import AsyncGenerator
 
 # ------------- 공용 리소스 (콜드 스타트 방지) -------------
 embeddings = UpstageEmbeddings(
@@ -187,15 +185,29 @@ def run_rag(question: str) -> str:
     return result["answer"]
 
 
-# # ------------ 실행 예시 ------------
-# if __name__ == "__main__":
-#     question = "안녕하세요?"
+async def stream_rag(question: str) -> AsyncGenerator[str, None]:
+    """질문을 스트리밍 방식으로 처리하여 토큰 단위 텍스트를 생성."""
+    state = {"question": question, "docs": [], "context": "", "answer": ""}
 
-#     # -- 초 세기 시작
-#     t0 = time.perf_counter()
+    state = node_retrieve(state)
+    state = node_trim(state)
+    ctx = state.get("context", "").strip()
+    if not ctx:
+        yield "해당 질문은 잘 모르겠습니다."
+        return
 
-#     result = app.invoke({"question": question, "docs": [], "context": "", "answer": ""})
-#     print(result["answer"])
+    messages = node_generate_prompt.format_messages(context=ctx, question=question)
 
-#     # -- 초 세기 끝
-#     print(f"\n총 소요: {time.perf_counter() - t0:.2f}s\n")
+    async for event in model.astream_events(messages, config={"streaming": True}):
+        if event["event"] != "on_chat_model_stream":
+            continue
+
+        chunk = event["data"]["chunk"]
+
+        text = chunk.content
+        if not text and hasattr(chunk, "text"):
+            maybe_text = chunk.text
+            text = maybe_text() if callable(maybe_text) else maybe_text
+
+        if text:
+            yield text
