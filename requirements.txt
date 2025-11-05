@@ -1,12 +1,34 @@
+# FastAPI & Web Server
 fastapi
-uvicorn[standard]
+uvicorn
 pydantic
-python-dotenv
-langchain-core
-langchain-community
-langchain-text-splitters
+pydantic-settings
+
+# LangChain Integrations
 langchain-upstage
+langchain-openai
 langchain-chroma
+langchain-community
+
+# LangGraph
 langgraph
+
+# Vector DB
 chromadb
-pymupdf
+
+# BM25 Retrieval
+rank-bm25
+
+# Document Processing
+pypdf<5.0.0
+beautifulsoup4
+
+# Data Processing
+pandas
+numpy
+
+# Utils
+python-dotenv
+requests
+aiohttp
+tiktoken

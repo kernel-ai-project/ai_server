@@ -1,4 +1,7 @@
+"""
+라우터 통합
+"""
+from .health import router as health_router
 from .rag import router as rag_router
-from .echo import router as echo_router
 
-__all__ = ["rag_router", "echo_router"]
+__all__ = ["health_router", "rag_router"]
