@@ -1,0 +1,34 @@
+# FastAPI & Web Server
+fastapi
+uvicorn
+pydantic
+pydantic-settings
+
+# LangChain Integrations
+langchain-upstage
+langchain-openai
+langchain-chroma
+langchain-community
+
+# LangGraph
+langgraph
+
+# Vector DB
+chromadb
+
+# BM25 Retrieval
+rank-bm25
+
+# Document Processing
+pypdf<5.0.0
+beautifulsoup4
+
+# Data Processing
+pandas
+numpy
+
+# Utils
+python-dotenv
+requests
+aiohttp
+tiktoken
